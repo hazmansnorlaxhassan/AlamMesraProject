@@ -295,6 +295,8 @@ const App = {
       adminForm.addEventListener('submit', (e) => {
         e.preventDefault();
         self.saveAdminForm();
+        self.loadSuperadminData();
+        alert('Account saved successfully!');
       });
     }
 

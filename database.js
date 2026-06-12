@@ -469,10 +469,11 @@ const DB = {
       adminData.id = 'u_' + Date.now();
       adminData.role = 'admin';
       users.push(adminData);
+      this._set('db_users', users);
+      this.logChange('saveAdmin', { admin: adminData });
+      return { success: true, message: 'Account saved successfully!' };
     }
 
-    this._set('db_users', users);
-    this.logChange('saveAdmin', { admin: adminData });
   },
 
   deleteAdmin: function (adminId) {
@@ -480,6 +481,7 @@ const DB = {
     users = users.filter(u => u.id !== adminId);
     this._set('db_users', users);
     this.logChange('deleteAdmin', { adminId });
+    alert("Admin account deleted successfully!");
   },
 
   // Clear all data except superadmin user
@@ -671,7 +673,7 @@ DB.logChange = function (action, details) {
     } else {
       detailMsg = `Action: ${action}`;
     }
-    
+
     Notifications.sendBrowserNotification('System Change Detected', `${detailMsg} (by ${entry.user})`);
   }
 
