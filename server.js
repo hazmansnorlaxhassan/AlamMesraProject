@@ -133,7 +133,7 @@ async function updateEmployees(employeesArray) {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         emp.id, ql, emp.name, emp.passportNo, passportExpiry, medicalExpiry,
-        insuranceExpiry, employmentPassExpiry, emp.employer, emp.employerContact, tanaExpiry, greenIcExpiry,
+        insuranceExpiry, employmentPassExpiry, employer, employerContact, tanaExpiry, greenIcExpiry,
         emp.remarks || '', contacts
       ]
     );
