@@ -561,7 +561,7 @@ const App = {
     this.typeChart = new Chart(ctxType, {
       type: 'bar',
       data: {
-        labels: ['QL', 'Passport', 'Medical', 'Insurance', 'EP', '' 'TANA', 'Green IC'],
+        labels: ['QL', 'Passport', 'Medical', 'Insurance', 'EP', 'TANA', 'Green IC'],
         datasets: [{
           label: 'Alerts (Expired / Warning)',
           data: [
@@ -620,8 +620,6 @@ const App = {
         document.getElementById('emp-medical-expiry').value = emp.medicalExpiry || '';
         document.getElementById('emp-insurance-expiry').value = emp.insuranceExpiry || '';
         document.getElementById('emp-ep-expiry').value = emp.employmentPassExpiry || '';
-        document.getElementById('emp-employer').value = emp.employer || '';
-        document.getElementById('emp-employer-contact').value = emp.employerContact || '';
         document.getElementById('emp-tana-expiry').value = emp.tanaExpiry || '';
         document.getElementById('emp-greenic-expiry').value = emp.greenIcExpiry || '';
         document.getElementById('emp-remarks').value = emp.remarks || '';
