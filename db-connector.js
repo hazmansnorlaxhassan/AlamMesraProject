@@ -8,12 +8,12 @@ require('dotenv').config();
   password: process.env.DB_PASSWORD || '',
 };*/
 
-const config = {
+/*const config = {
   host: process.env.MYSQLHOST || "yamabiko.proxy.rlwy.net",
   port: parseInt(process.env.MYSQLPORT, 10) || 43143,
   user: process.env.MYSQLUSER || "root",
   password: process.env.MYSQLPASSWORD || "cJvqatUoJXOBUXpVCRgCcNzrmVZlcBya",
-};
+};*/
 
 /*const config = {
   host: 'yamabiko.proxy.rlwy.net',
@@ -22,6 +22,13 @@ const config = {
   password: 'cJvqatUoJXOBUXpVCRgCcNzrmVZlcBya'
 };*/
 
+const config = {
+  host: process.env.hostname || "erzyli.h.filess.io",
+  port: parseInt(process.env.port, 10) || 3307,
+  user: process.env.username || "alam_mesra_db_different",
+  password: process.env.password || "4b9db4e1af5306a4bea1c381d0f47aff143bdfbe",
+};
+
 let pool = null;
 
 async function initDatabase() {
@@ -29,7 +36,7 @@ async function initDatabase() {
   try {
     connection = await mysql.createConnection(config);
     //const dbName = process.env.DB_DATABASE || 'alam_mesra_db';
-    const dbName = process.env.MYSQLDATABASE || "railway";
+    const dbName = process.env.database || "alam_mesra_db_different";
     //await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
     console.log(`✅ Database "${dbName}" ensured.`);
   } catch (err) {
@@ -43,7 +50,7 @@ async function initDatabase() {
   pool = mysql.createPool({
     ...config,
     //database: process.env.DB_DATABASE || 'alam_mesra_db',
-    database: process.env.MYSQLDATABASE || "railway",
+    database: process.env.database || "alam_mesra_db_different",
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
