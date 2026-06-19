@@ -515,6 +515,10 @@ const DB = {
     this._set('db_settings', updated);
     this.logChange('saveSettings', { updated });
   },
+    // Retrieve all employee records from local storage
+    getEmployees: function () {
+      return this._get('db_employees') || [];
+    },
 
   // --- Employee operations (Admin/Superadmin) ---
   // Search employees by employer name (case-insensitive)
