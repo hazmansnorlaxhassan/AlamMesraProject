@@ -48,12 +48,14 @@ const ExcelHandler = {
         '20/03/2027', // QL Expiry
         'Jane Doe',
         'B11223344',
-        '15/05/2027',
+        '15/05/2027', // Passport Expiry
         '', // Medical Expiry (empty)
-        '20/12/2026',
-        'Company B', //Employer
-        '0123456789', //Employer Contact
-        '05/06/2028',
+        '20/12/2026', // Insurance Expiry
+        '', //Employment Pass Expiry
+        '', //Employer
+        '', //Employer Contact
+        '05/06/2028', // TANA Expiry
+        '', // Green IC Expiry
         'Green IC is applicable for permanent residents.'
       ]
     ];
