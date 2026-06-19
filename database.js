@@ -586,7 +586,7 @@ const DB = {
 
   // Bulk Import with duplicate checks
   bulkImportEmployees: function (newEmployees) {
-    //const existing = this.getEmployees();
+    const existing = this.getEmployees();
     let updatedCount = 0;
     let addedCount = 0;
 
