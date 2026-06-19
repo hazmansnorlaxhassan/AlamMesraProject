@@ -794,6 +794,8 @@ const App = {
           <td>${emp.medicalExpiry || '-'}</td>
           <td>${emp.insuranceExpiry || '-'}</td>
           <td>${emp.employmentPassExpiry || '-'}</td>
+          <td>${emp.employer || '-'}</td>
+          <td>${emp.employerContact || '-'}</td>
           <td>${emp.tanaExpiry || '-'}</td>
           <td>${emp.greenIcExpiry || '-'}</td>
         `;
