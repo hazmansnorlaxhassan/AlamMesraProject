@@ -544,7 +544,12 @@ const DB = {
     }
 
     // Ensure employers and employerContact fields exist (default empty strings)
-
+    if (!employeeData.employers) {
+      employeeData.employers = '';
+    }
+    if (!employeeData.employerContact) {
+      employeeData.employerContact = '';
+    }
 
     if (employeeData.id) {
       const index = employees.findIndex(e => e.id === employeeData.id);
@@ -554,7 +559,8 @@ const DB = {
         employees[index] = {
           ...existingEmp,
           ...employeeData,
-
+          employers: employeeData.employers || existingEmp.employers,
+          employerContact: employeeData.employerContact || existingEmp.employerContact
         };
       } else {
         return { success: false, message: 'Employee not found.' };
@@ -562,7 +568,8 @@ const DB = {
     } else {
       employeeData.id = 'emp_' + Date.now();
       // Ensure default employers and employerContact fields for new entries
-
+      employeeData.employers = employeeData.employers || '';
+      employeeData.employerContact = employeeData.employerContact || '';
       employees.push(employeeData);
     }
 
@@ -579,7 +586,7 @@ const DB = {
 
   // Bulk Import with duplicate checks
   bulkImportEmployees: function (newEmployees) {
-    const existing = this.getEmployees();
+    //const existing = this.getEmployees();
     let updatedCount = 0;
     let addedCount = 0;
 
@@ -591,7 +598,8 @@ const DB = {
         existing[existingIdx] = {
           ...existingEmp,
           ...newEmp,
-
+          employers: newEmp.employers || existingEmp.employers,
+          employerContact: newEmp.employerContact || existingEmp.employerContact,
           contacts: {
             emails: newEmp.contacts?.emails?.length ? newEmp.contacts.emails : existingEmp.contacts.emails,
             whatsappNumbers: newEmp.contacts?.whatsappNumbers?.length ? newEmp.contacts.whatsappNumbers : existingEmp.contacts.whatsappNumbers
@@ -600,7 +608,9 @@ const DB = {
         updatedCount++;
       } else {
         newEmp.id = 'emp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-
+        // Ensure employers and employerContact fields exist for new entries
+        newEmp.employers = newEmp.employers || '';
+        newEmp.employerContact = newEmp.employerContact || '';
         if (!newEmp.contacts) {
           newEmp.contacts = { emails: [], whatsappNumbers: [] };
         }
