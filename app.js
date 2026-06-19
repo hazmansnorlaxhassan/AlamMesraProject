@@ -420,6 +420,8 @@ const App = {
         <td>${getBadgeHTML(emp.medicalExpiry, evalData.documents.medicalExpiry)}</td>
         <td>${getBadgeHTML(emp.insuranceExpiry, evalData.documents.insuranceExpiry)}</td>
         <td>${getBadgeHTML(emp.employmentPassExpiry, evalData.documents.employmentPassExpiry)}</td>
+        <td>${getBadgeHTML(emp.employer, evalData.documents.employer)}</td>
+        <td>${getBadgeHTML(emp.employerContact, evalData.documents.employerContact)}</td>
         <td>${getBadgeHTML(emp.tanaExpiry, evalData.documents.tanaExpiry)}</td>
         <td>${getBadgeHTML(emp.greenIcExpiry, evalData.documents.greenIcExpiry)}</td>
         <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${emp.remarks || ''}">${emp.remarks || '-'}</td>
@@ -559,7 +561,7 @@ const App = {
     this.typeChart = new Chart(ctxType, {
       type: 'bar',
       data: {
-        labels: ['QL', 'Passport', 'Medical', 'Insurance', 'EP', 'TANA', 'Green IC'],
+        labels: ['QL', 'Passport', 'Medical', 'Insurance', 'EP', '' 'TANA', 'Green IC'],
         datasets: [{
           label: 'Alerts (Expired / Warning)',
           data: [
@@ -618,6 +620,8 @@ const App = {
         document.getElementById('emp-medical-expiry').value = emp.medicalExpiry || '';
         document.getElementById('emp-insurance-expiry').value = emp.insuranceExpiry || '';
         document.getElementById('emp-ep-expiry').value = emp.employmentPassExpiry || '';
+        document.getElementById('emp-employer').value = emp.employer || '';
+        document.getElementById('emp-employer-contact').value = emp.employerContact || '';
         document.getElementById('emp-tana-expiry').value = emp.tanaExpiry || '';
         document.getElementById('emp-greenic-expiry').value = emp.greenIcExpiry || '';
         document.getElementById('emp-remarks').value = emp.remarks || '';
@@ -643,6 +647,8 @@ const App = {
       medicalExpiry: document.getElementById('emp-medical-expiry').value,
       insuranceExpiry: document.getElementById('emp-insurance-expiry').value,
       employmentPassExpiry: document.getElementById('emp-ep-expiry').value,
+      employer: document.getElementById('emp-employer').value.trim(),
+      employerContact: document.getElementById('emp-employer-contact').value.trim(),
       tanaExpiry: document.getElementById('emp-tana-expiry').value,
       greenIcExpiry: document.getElementById('emp-greenic-expiry').value,
       remarks: document.getElementById('emp-remarks').value.trim(),
@@ -940,6 +946,8 @@ const App = {
       medicalExpiry: 'Medical Check',
       insuranceExpiry: 'Insurance',
       employmentPassExpiry: 'Employment Pass',
+      employer: 'Employer',
+      employerContact: 'Employer Contact',
       tanaExpiry: 'TANA Pass',
       greenIcExpiry: 'Green IC'
     };
