@@ -122,16 +122,18 @@ async function updateEmployees(employeesArray) {
     const medicalExpiry = emp.medicalExpiry || null;
     const insuranceExpiry = emp.insuranceExpiry || null;
     const employmentPassExpiry = emp.employmentPassExpiry || null;
+    const employer = emp.employer || null;
+    const employerContact = emp.employerContact || null;
     const tanaExpiry = emp.tanaExpiry || null;
     const greenIcExpiry = emp.greenIcExpiry || null;
     const contacts = emp.contacts ? JSON.stringify(emp.contacts) : null;
 
     await db.query(
-      `INSERT INTO employees (id, ql, name, passportNo, passportExpiry, medicalExpiry, insuranceExpiry, employmentPassExpiry, tanaExpiry, greenIcExpiry, remarks, contacts)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO employees (id, ql, name, passportNo, passportExpiry, medicalExpiry, insuranceExpiry, employmentPassExpiry, employer, employerContact, tanaExpiry, greenIcExpiry, remarks, contacts)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         emp.id, ql, emp.name, emp.passportNo, passportExpiry, medicalExpiry,
-        insuranceExpiry, employmentPassExpiry, tanaExpiry, greenIcExpiry,
+        insuranceExpiry, employmentPassExpiry, emp.employer, emp.employerContact, tanaExpiry, greenIcExpiry,
         emp.remarks || '', contacts
       ]
     );

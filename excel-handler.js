@@ -11,6 +11,8 @@ const ExcelHandler = {
     'Medical',
     'Insurance',
     'Employment Pass',
+    'Employer',
+    'Employer Contact',
     'TANA',
     'Green IC',
     'Remarks'
@@ -36,6 +38,8 @@ const ExcelHandler = {
         '10/08/2026', // Medical Expiry
         '01/11/2027', // Insurance Expiry
         '15/07/2026', // Employment Pass Expiry
+        '', //Employer
+        '', //Employer Contact
         '30/09/2026', // TANA Expiry
         '',           // Green IC Expiry (Leave empty for N/A)
         'Sample Row: Fill dates as DD/MM/YYYY or YYYY-MM-DD'
@@ -47,8 +51,8 @@ const ExcelHandler = {
         '15/05/2027',
         '', // Medical Expiry (empty)
         '20/12/2026',
-        '',
-        '',
+        'Company B', //Employer
+        '0123456789', //Employer Contact
         '05/06/2028',
         'Green IC is applicable for permanent residents.'
       ]
@@ -137,6 +141,8 @@ const ExcelHandler = {
             medicalExpiry: this.cleanDate(this.getVal(row, mapping.medicalExpiryIdx)),
             insuranceExpiry: this.cleanDate(this.getVal(row, mapping.insuranceExpiryIdx)),
             employmentPassExpiry: this.cleanDate(this.getVal(row, mapping.employmentPassExpiryIdx)),
+            employer: this.getVal(row, mapping.employerIdx),
+            employerContact: this.getVal(row, mapping.employerContactIdx),
             tanaExpiry: this.cleanDate(this.getVal(row, mapping.tanaExpiryIdx)),
             greenIcExpiry: this.cleanDate(this.getVal(row, mapping.greenIcExpiryIdx)),
             remarks: this.getVal(row, mapping.remarksIdx),
@@ -200,6 +206,8 @@ const ExcelHandler = {
       medicalExpiryIdx: findIdx(['medical', 'medical expiry', 'medical expiry date', 'medical exp']),
       insuranceExpiryIdx: findIdx(['insurance', 'insurance expiry', 'insurance expiry date', 'insurance exp']),
       employmentPassExpiryIdx: findIdx(['employment pass', 'ep', 'employment pass expiry', 'ep expiry']),
+      employerIdx: findIdx(['employer', 'company', 'employer name', 'company name']),
+      employerContactIdx: findIdx(['employer contact', 'employer contact number', 'company contact', 'company contact number']),
       tanaExpiryIdx: findIdx(['tana', 'tana expiry', 'tana expiry date', 'tana exp']),
       greenIcExpiryIdx: findIdx(['green ic', 'green ic expiry', 'green ic expiry date', 'greenic']),
       remarksIdx: findIdx(['remarks', 'remark', 'notes', 'comments'])

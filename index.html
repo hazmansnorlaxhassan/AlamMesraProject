@@ -246,6 +246,8 @@
                     <th>Medical Expiry</th>
                     <th>Insurance Expiry</th>
                     <th>Employment Pass</th>
+                    <th>Employer</th>
+                    <th>Employer Contact</th>
                     <th>TANA</th>
                     <th>Green IC Expiry</th>
                     <th>Remarks</th>
@@ -335,6 +337,8 @@
                       <th>Medical</th>
                       <th>Insurance</th>
                       <th>Employment Pass</th>
+                      <th>Employer</th>
+                      <th>Employer Contact</th>
                       <th>TANA</th>
                       <th>Green IC</th>
                     </tr>
@@ -348,7 +352,8 @@
 
             <div class="flex-row justify-between align-center">
               <span style="font-size:12px; color: var(--text-muted);">Ensure columns match exactly: QL, Name, Passport
-                No, Passport, Medical, Insurance, Employment Pass, TANA, Green IC, Remarks.</span>
+                No, Passport, Medical, Insurance, Employment Pass, Employer, Employer Contact, TANA, Green IC,
+                Remarks.</span>
               <button id="btn-commit-import" class="btn btn-primary d-none">
                 <i data-lucide="check"></i> Confirm Import
               </button>
@@ -541,6 +546,14 @@
           <div class="form-group" style="margin-bottom:0;">
             <label for="emp-ep-expiry">Employment Pass Expiration</label>
             <input type="date" id="emp-ep-expiry" class="form-control-simple">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="emp-employer">Employer</label>
+            <input type="text" id="emp-employer" class="form-control-simple">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="emp-employer-contact">Employer Contact</label>
+            <input type="text" id="emp-employer-contact" class="form-control-simple">
           </div>
           <div class="form-group" style="margin-bottom:0;">
             <label for="emp-tana-expiry">TANA</label>
