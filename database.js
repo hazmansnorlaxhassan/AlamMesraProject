@@ -517,8 +517,19 @@ const DB = {
   },
 
   // --- Employee operations (Admin/Superadmin) ---
-  getEmployees: function () {
-    return this._get('db_employees') || [];
+  // Search employees by employer name (case-insensitive)
+  searchEmployeesByEmployer: function (searchTerm) {
+    const term = searchTerm ? searchTerm.toLowerCase() : '';
+    // Filter localStorage data first
+    const employees = this.getEmployees();
+    const filtered = employees.filter(e => e.employers && e.employers.toLowerCase().includes(term));
+    if (filtered.length) return filtered;
+    // Fallback to MySQL query if no local results or to ensure fresh data
+    // Note: using LIKE for partial match, escaping %
+    const sql = `SELECT * FROM employees WHERE LOWER(employers) LIKE ?`;
+    const param = `%${term}%`;
+    // This returns a promise; callers should handle async.
+    return this.query(sql, [param]);
   },
 
   getEmployeeById: function (id) {
@@ -532,15 +543,33 @@ const DB = {
       return { success: false, message: 'Name and Passport No are required.' };
     }
 
+    // Ensure employers and employerContact fields exist (default empty strings)
+    if (!employeeData.employers) {
+      employeeData.employers = '';
+    }
+    if (!employeeData.employerContact) {
+      employeeData.employerContact = '';
+    }
+
     if (employeeData.id) {
       const index = employees.findIndex(e => e.id === employeeData.id);
       if (index !== -1) {
-        employees[index] = { ...employees[index], ...employeeData };
+        // Preserve existing employers if not provided in update
+        const existingEmp = employees[index];
+        employees[index] = {
+          ...existingEmp,
+          ...employeeData,
+          employers: employeeData.employers || existingEmp.employers,
+          employerContact: employeeData.employerContact || existingEmp.employerContact
+        };
       } else {
         return { success: false, message: 'Employee not found.' };
       }
     } else {
       employeeData.id = 'emp_' + Date.now();
+      // Ensure default employers and employerContact fields for new entries
+      employeeData.employers = employeeData.employers || '';
+      employeeData.employerContact = employeeData.employerContact || '';
       employees.push(employeeData);
     }
 
@@ -564,17 +593,24 @@ const DB = {
     newEmployees.forEach(newEmp => {
       const existingIdx = existing.findIndex(e => e.passportNo.trim().toLowerCase() === newEmp.passportNo.trim().toLowerCase());
       if (existingIdx !== -1) {
+        // Preserve existing employers and employerContact if not provided in import
+        const existingEmp = existing[existingIdx];
         existing[existingIdx] = {
-          ...existing[existingIdx],
+          ...existingEmp,
           ...newEmp,
+          employers: newEmp.employers || existingEmp.employers,
+          employerContact: newEmp.employerContact || existingEmp.employerContact,
           contacts: {
-            emails: newEmp.contacts?.emails?.length ? newEmp.contacts.emails : existing[existingIdx].contacts.emails,
-            whatsappNumbers: newEmp.contacts?.whatsappNumbers?.length ? newEmp.contacts.whatsappNumbers : existing[existingIdx].contacts.whatsappNumbers
+            emails: newEmp.contacts?.emails?.length ? newEmp.contacts.emails : existingEmp.contacts.emails,
+            whatsappNumbers: newEmp.contacts?.whatsappNumbers?.length ? newEmp.contacts.whatsappNumbers : existingEmp.contacts.whatsappNumbers
           }
         };
         updatedCount++;
       } else {
         newEmp.id = 'emp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        // Ensure employers and employerContact fields exist for new entries
+        newEmp.employers = newEmp.employers || '';
+        newEmp.employerContact = newEmp.employerContact || '';
         if (!newEmp.contacts) {
           newEmp.contacts = { emails: [], whatsappNumbers: [] };
         }
