@@ -56,10 +56,7 @@ const DB = {
       }));
     }
 
-      // Debug: log employee payload before sending
-      if (table === 'employees') {
-        console.log('[DB] Debug payload for employees:', payload);
-      }
+
       const response = await fetch(`/api/db/${table}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
