@@ -35,18 +35,31 @@ const DB = {
     const table = keyMap[key];
     if (!table) return;
 
-    // Transform employee data to match server schema
+    // Transform employee data to match server schema exactly
     let payload = val;
     if (table === 'employees') {
       payload = (Array.isArray(val) ? val : []).map(emp => ({
-        ...emp,
-        // Ensure singular employer field expected by server
-        employer: emp.employers || emp.employer || '',
-        employerContact: emp.employerContact || ''
+        id: emp.id || null,
+        ql: emp.ql || null,
+        name: emp.name || null,
+        passportNo: emp.passportNo || null,
+        passportExpiry: emp.passportExpiry || null,
+        medicalExpiry: emp.medicalExpiry || null,
+        insuranceExpiry: emp.insuranceExpiry || null,
+        employmentPassExpiry: emp.employmentPassExpiry || null,
+        employer: emp.employers || emp.employer || null,
+        employerContact: emp.employerContact || null,
+        tanaExpiry: emp.tanaExpiry || null,
+        greenIcExpiry: emp.greenIcExpiry || null,
+        remarks: emp.remarks || '',
+        contacts: emp.contacts ? JSON.stringify(emp.contacts) : null
       }));
     }
 
-    try {
+      // Debug: log employee payload before sending
+      if (table === 'employees') {
+        console.log('[DB] Debug payload for employees:', payload);
+      }
       const response = await fetch(`/api/db/${table}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -56,7 +69,9 @@ const DB = {
         console.log(`[DB] ✅ Synced ${table} to MySQL server.`);
         this._updateSyncStatus('server-saved');
       } else {
-        console.warn(`[DB] ❌ Server rejected sync for ${table}.`);
+        console.warn(`[DB] ❌ Server rejected sync for ${table}. Status: ${response.status}`);
+        const errorText = await response.text();
+        console.warn('Server response:', errorText);
         this._updateSyncStatus('error');
       }
     } catch (err) {
