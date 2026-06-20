@@ -23,10 +23,10 @@ require('dotenv').config();
 };*/
 
 const config = {
-  host: process.env.hostname || "erzyli.h.filess.io",
-  port: parseInt(process.env.port, 10) || 3307,
-  user: process.env.username || "alam_mesra_db_different",
-  password: process.env.password || "4b9db4e1af5306a4bea1c381d0f47aff143bdfbe",
+  host: process.env.DB_HOST || "erzyli.h.filess.io",
+  port: parseInt(process.env.DB_PORT, 10) || 3307,
+  user: process.env.DB_USER || "alam_mesra_db_different",
+  password: process.env.DB_PASSWORD || "4b9db4e1af5306a4bea1c381d0f47aff143bdfbe",
 };
 
 let pool = null;
@@ -35,9 +35,8 @@ async function initDatabase() {
   let connection;
   try {
     connection = await mysql.createConnection(config);
-    //const dbName = process.env.DB_DATABASE || 'alam_mesra_db';
-    const dbName = process.env.database || "alam_mesra_db_different";
-    //await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+    const dbName = process.env.DB_DATABASE || 'alam_mesra_db_different';
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
     console.log(`✅ Database "${dbName}" ensured.`);
   } catch (err) {
     console.error('❌ Failed to connect to MySQL during initial setup check:', err.message);
@@ -49,8 +48,8 @@ async function initDatabase() {
   // Create connection pool with database selected
   pool = mysql.createPool({
     ...config,
-    //database: process.env.DB_DATABASE || 'alam_mesra_db',
-    database: process.env.database || "alam_mesra_db_different",
+    database: process.env.DB_DATABASE || 'alam_mesra_db_different',
+    //database: process.env.database || "alam_mesra_db_different",
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -86,7 +85,7 @@ async function createTables() {
       employmentPassExpiry DATE NULL,
       tanaExpiry DATE NULL,
       greenIcExpiry DATE NULL,
-      employers VARCHAR(255) NOT NULL,
+      employer VARCHAR(255) NOT NULL,
       employerContact VARCHAR(255) NOT NULL,
       remarks TEXT,
       contacts JSON NULL

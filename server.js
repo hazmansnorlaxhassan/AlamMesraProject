@@ -58,6 +58,8 @@ async function readAllDB() {
     employmentPassExpiry: formatDate(emp.employmentPassExpiry),
     tanaExpiry: formatDate(emp.tanaExpiry),
     greenIcExpiry: formatDate(emp.greenIcExpiry),
+    employer: emp.employer || emp.employers || '',
+    employerContact: emp.employerContact || '',
     remarks: emp.remarks || '',
     contacts: typeof emp.contacts === 'string' ? JSON.parse(emp.contacts) : (emp.contacts || { emails: [], whatsappNumbers: [] })
   }));

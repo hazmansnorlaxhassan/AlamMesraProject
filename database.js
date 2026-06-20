@@ -35,28 +35,19 @@ const DB = {
     const table = keyMap[key];
     if (!table) return;
 
-    // Transform employee data to match server schema exactly
+    // Transform employee data to match server schema
     let payload = val;
     if (table === 'employees') {
       payload = (Array.isArray(val) ? val : []).map(emp => ({
-        id: emp.id || null,
-        ql: emp.ql || null,
-        name: emp.name || null,
-        passportNo: emp.passportNo || null,
-        passportExpiry: emp.passportExpiry || null,
-        medicalExpiry: emp.medicalExpiry || null,
-        insuranceExpiry: emp.insuranceExpiry || null,
-        employmentPassExpiry: emp.employmentPassExpiry || null,
-        employer: emp.employers || emp.employer || null,
-        employerContact: emp.employerContact || null,
-        tanaExpiry: emp.tanaExpiry || null,
-        greenIcExpiry: emp.greenIcExpiry || null,
-        remarks: emp.remarks || '',
-        contacts: emp.contacts ? JSON.stringify(emp.contacts) : null
+        ...emp,
+        // Ensure employer field exists for server compatibility
+        employer: emp.employer || '',
+        // Ensure employerContact field exists for server compatibility
+        employerContact: emp.employerContact || ''
       }));
     }
 
-
+    try {
       const response = await fetch(`/api/db/${table}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -72,7 +63,7 @@ const DB = {
         this._updateSyncStatus('error');
       }
     } catch (err) {
-      console.warn(`[DB] Network error syncing ${table} to server:`, err.message);
+      console.warn('[DB] Sync error for', table, ':', err.message);
       this._updateSyncStatus('error');
     }
   },
@@ -538,10 +529,10 @@ const DB = {
     this._set('db_settings', updated);
     this.logChange('saveSettings', { updated });
   },
-    // Retrieve all employee records from local storage
-    getEmployees: function () {
-      return this._get('db_employees') || [];
-    },
+  // Retrieve all employee records from local storage
+  getEmployees: function () {
+    return this._get('db_employees') || [];
+  },
 
   // --- Employee operations (Admin/Superadmin) ---
   // Search employees by employer name (case-insensitive)
@@ -549,11 +540,11 @@ const DB = {
     const term = searchTerm ? searchTerm.toLowerCase() : '';
     // Filter localStorage data first
     const employees = this.getEmployees();
-    const filtered = employees.filter(e => e.employers && e.employers.toLowerCase().includes(term));
+    const filtered = employees.filter(e => e.employer && e.employer.toLowerCase().includes(term));
     if (filtered.length) return filtered;
     // Fallback to MySQL query if no local results or to ensure fresh data
     // Note: using LIKE for partial match, escaping %
-    const sql = `SELECT * FROM employees WHERE LOWER(employers) LIKE ?`;
+    const sql = `SELECT * FROM employees WHERE LOWER(employer) LIKE ?`;
     const param = `%${term}%`;
     // This returns a promise; callers should handle async.
     return this.query(sql, [param]);
@@ -571,8 +562,8 @@ const DB = {
     }
 
     // Ensure employers and employerContact fields exist (default empty strings)
-    if (!employeeData.employers) {
-      employeeData.employers = '';
+    if (!employeeData.employer) {
+      employeeData.employer = '';
     }
     if (!employeeData.employerContact) {
       employeeData.employerContact = '';
@@ -586,7 +577,7 @@ const DB = {
         employees[index] = {
           ...existingEmp,
           ...employeeData,
-          employers: employeeData.employers || existingEmp.employers,
+          employer: employeeData.employer || existingEmp.employer,
           employerContact: employeeData.employerContact || existingEmp.employerContact
         };
       } else {
@@ -595,7 +586,7 @@ const DB = {
     } else {
       employeeData.id = 'emp_' + Date.now();
       // Ensure default employers and employerContact fields for new entries
-      employeeData.employers = employeeData.employers || '';
+      employeeData.employer = employeeData.employer || '';
       employeeData.employerContact = employeeData.employerContact || '';
       employees.push(employeeData);
     }
@@ -625,7 +616,7 @@ const DB = {
         existing[existingIdx] = {
           ...existingEmp,
           ...newEmp,
-          employers: newEmp.employers || existingEmp.employers,
+          employer: newEmp.employer || existingEmp.employer,
           employerContact: newEmp.employerContact || existingEmp.employerContact,
           contacts: {
             emails: newEmp.contacts?.emails?.length ? newEmp.contacts.emails : existingEmp.contacts.emails,
@@ -636,7 +627,7 @@ const DB = {
       } else {
         newEmp.id = 'emp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
         // Ensure employers and employerContact fields exist for new entries
-        newEmp.employers = newEmp.employers || '';
+        newEmp.employer = newEmp.employer || '';
         newEmp.employerContact = newEmp.employerContact || '';
         if (!newEmp.contacts) {
           newEmp.contacts = { emails: [], whatsappNumbers: [] };

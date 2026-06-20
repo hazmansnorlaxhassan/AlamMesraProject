@@ -352,10 +352,12 @@ const App = {
     const settings = DB.getSettings();
 
     this.filteredEmployees = this.employees.filter(emp => {
-      // Name or Passport search
+      // Name, Passport, QL, Employer, or Employer Contact search
       const matchesSearch = emp.name.toLowerCase().includes(searchVal) ||
         emp.passportNo.toLowerCase().includes(searchVal) ||
-        (emp.ql && emp.ql.toLowerCase().includes(searchVal));
+        (emp.ql && emp.ql.toLowerCase().includes(searchVal)) ||
+        (emp.employer && emp.employer.toLowerCase().includes(searchVal)) ||
+        (emp.employerContact && emp.employerContact.toLowerCase().includes(searchVal));
 
       if (!matchesSearch) return false;
 
@@ -390,20 +392,17 @@ const App = {
 
       // Helper to generate badge HTML for document date
       const getBadgeHTML = (dateVal, evalResult) => {
-        if (evalResult.status === Notifications.STATUS_EMPTY) {
+        if (!evalResult || evalResult.status === Notifications.STATUS_EMPTY) {
           return `<span class="badge badge-empty">N/A</span>`;
         }
-
         let badgeClass = 'badge-healthy';
         let desc = `${evalResult.daysRemaining} days left`;
-
         if (evalResult.status === Notifications.STATUS_DANGER) {
           badgeClass = 'badge-danger';
           desc = `EXPIRED (${Math.abs(evalResult.daysRemaining)}d ago)`;
         } else if (evalResult.status === Notifications.STATUS_WARNING) {
           badgeClass = 'badge-warning';
         }
-
         return `
           <span class="badge ${badgeClass}">
             ${dateVal}
@@ -953,6 +952,7 @@ const App = {
     employees.forEach(emp => {
       const evalData = Notifications.evaluateEmployee(emp, settings.warningDays);
       for (const [key, evalResult] of Object.entries(evalData.documents)) {
+        if (key === 'employer' || key === 'employerContact') continue;
         if (evalResult.status === Notifications.STATUS_DANGER) {
           dangerAlerts.push({ emp, docKey: key, evalResult });
         } else if (evalResult.status === Notifications.STATUS_WARNING) {
@@ -961,7 +961,15 @@ const App = {
       }
     });
 
-    const allAlerts = [...dangerAlerts, ...warningAlerts];
+    let allAlerts = [...dangerAlerts, ...warningAlerts];
+    const searchVal = document.getElementById('search-alerts')?.value?.toLowerCase().trim() || '';
+    if (searchVal) {
+      allAlerts = allAlerts.filter(alert => {
+        const emp = alert.emp;
+        return (emp.employer && emp.employer.toLowerCase().includes(searchVal)) ||
+          (emp.employerContact && emp.employerContact.toLowerCase().includes(searchVal));
+      });
+    }
 
     if (allAlerts.length === 0) {
       container.innerHTML = `
