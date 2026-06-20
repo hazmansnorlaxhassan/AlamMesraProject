@@ -35,11 +35,22 @@ const DB = {
     const table = keyMap[key];
     if (!table) return;
 
+    // Transform employee data to match server schema
+    let payload = val;
+    if (table === 'employees') {
+      payload = (Array.isArray(val) ? val : []).map(emp => ({
+        ...emp,
+        // Ensure singular employer field expected by server
+        employer: emp.employers || emp.employer || '',
+        employerContact: emp.employerContact || ''
+      }));
+    }
+
     try {
       const response = await fetch(`/api/db/${table}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(val)
+        body: JSON.stringify(payload)
       });
       if (response.ok) {
         console.log(`[DB] ✅ Synced ${table} to MySQL server.`);
