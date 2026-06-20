@@ -23,10 +23,10 @@ require('dotenv').config();
 };*/
 
 const config = {
-  host: process.env.DB_HOST || "erzyli.h.filess.io",
-  port: parseInt(process.env.DB_PORT, 10) || 3307,
-  user: process.env.DB_USER || "alam_mesra_db_different",
-  password: process.env.DB_PASSWORD || "4b9db4e1af5306a4bea1c381d0f47aff143bdfbe",
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT, 10),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
 };
 
 let pool = null;
@@ -35,7 +35,7 @@ async function initDatabase() {
   let connection;
   try {
     connection = await mysql.createConnection(config);
-    const dbName = process.env.DB_DATABASE || 'alam_mesra_db_different';
+    const dbName = process.env.DB_DATABASE;
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
     console.log(`✅ Database "${dbName}" ensured.`);
   } catch (err) {
@@ -48,7 +48,7 @@ async function initDatabase() {
   // Create connection pool with database selected
   pool = mysql.createPool({
     ...config,
-    database: process.env.DB_DATABASE || 'alam_mesra_db_different',
+    database: process.env.DB_DATABASE,
     //database: process.env.database || "alam_mesra_db_different",
     waitForConnections: true,
     connectionLimit: 2,
