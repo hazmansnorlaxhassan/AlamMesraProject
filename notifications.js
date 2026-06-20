@@ -38,7 +38,7 @@ const Notifications = {
       { key: 'medicalExpiry', label: 'Medical' },
       { key: 'insuranceExpiry', label: 'Insurance' },
       { key: 'employmentPassExpiry', label: 'Employment Pass' },
-      //{ key: 'tanaExpiry', label: 'TANA' },
+      { key: 'tanaExpiry', label: 'TANA' },
       { key: 'greenIcExpiry', label: 'Green IC' }
     ];
 
@@ -111,7 +111,7 @@ const Notifications = {
       medicalExpiry: 'Medical Check',
       insuranceExpiry: 'Insurance',
       employmentPassExpiry: 'Employment Pass',
-      // tanaExpiry: 'TANA Pass',
+      tanaExpiry: 'TANA Pass',
       greenIcExpiry: 'Green IC'
     };
 
@@ -190,7 +190,7 @@ const Notifications = {
       medicalExpiry: 'Medical Check',
       insuranceExpiry: 'Insurance',
       employmentPassExpiry: 'Employment Pass',
-      //tanaExpiry: 'TANA Pass',
+      tanaExpiry: 'TANA Pass',
       greenIcExpiry: 'Green IC'
     };
 

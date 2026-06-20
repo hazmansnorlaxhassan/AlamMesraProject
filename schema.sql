@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS employees (
   employmentPassExpiry DATE NULL,
   tanaExpiry DATE NULL,
   greenIcExpiry DATE NULL,
-  employers VARCHAR(255) NOT NULL,
+  employer VARCHAR(255) NOT NULL,
   employerContact VARCHAR(255) NOT NULL,
   remarks TEXT,
   contacts JSON NULL

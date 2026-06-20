@@ -419,8 +419,8 @@ const App = {
         <td>${getBadgeHTML(emp.medicalExpiry, evalData.documents.medicalExpiry)}</td>
         <td>${getBadgeHTML(emp.insuranceExpiry, evalData.documents.insuranceExpiry)}</td>
         <td>${getBadgeHTML(emp.employmentPassExpiry, evalData.documents.employmentPassExpiry)}</td>
-        <td>${getBadgeHTML(emp.employer, evalData.documents.employer)}</td>
-        <td>${getBadgeHTML(emp.employerContact, evalData.documents.employerContact)}</td>
+        <td>${emp.employer || '-'}</td>
+        <td>${emp.employerContact || '-'}</td>
         <td>${getBadgeHTML(emp.tanaExpiry, evalData.documents.tanaExpiry)}</td>
         <td>${getBadgeHTML(emp.greenIcExpiry, evalData.documents.greenIcExpiry)}</td>
         <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${emp.remarks || ''}">${emp.remarks || '-'}</td>
