@@ -105,6 +105,21 @@ const Notifications = {
     msg += `*Passport No:* ${emp.passportNo}\n\n`;
     msg += `Please review the following expiring/expired documents:\n`;
 
+
+    function formatDateDMY(dateStr) {
+      if (!dateStr) return '-';
+
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr; // fallback if invalid
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+
+      return `${day}-${month}-${year}`;
+    }
+
+
     const docLabels = {
       ql: 'QL',
       passportExpiry: 'Passport',
@@ -117,11 +132,13 @@ const Notifications = {
 
     let hasAlerts = false;
     for (const [key, evalResult] of Object.entries(evaluation.documents)) {
+      if (key === 'tanaExpiry') continue; // SKIP TANA
+      const formattedDate = formatDateDMY(emp[key]);
       if (evalResult.status === this.STATUS_DANGER) {
-        msg += `❌ *${docLabels[key]}*: EXPIRED on ${emp[key]} (${Math.abs(evalResult.daysRemaining)} days ago)\n`;
+        msg += `❌ *${docLabels[key]}*: EXPIRED on ${formattedDate} (${Math.abs(evalResult.daysRemaining)} days ago)\n`;
         hasAlerts = true;
       } else if (evalResult.status === this.STATUS_WARNING) {
-        msg += `⚠️ *${docLabels[key]}*: Expiring on ${emp[key]} (${evalResult.daysRemaining} days left)\n`;
+        msg += `⚠️ *${docLabels[key]}*: Expiring on ${formattedDate} (${evalResult.daysRemaining} days left)\n`;
         hasAlerts = true;
       }
     }
@@ -130,9 +147,9 @@ const Notifications = {
       msg += `All documents are currently valid and healthy. ✅\n`;
     }
 
-    if (emp.remarks) {
-      msg += `\n*Remarks:* ${emp.remarks}\n`;
-    }
+    //if (emp.remarks) {
+    //msg += `\n*Remarks:* ${emp.remarks}\n`;
+    //}
 
     msg += `\n_Please process the renewals immediately. System notification._`;
     return msg;
@@ -190,7 +207,7 @@ const Notifications = {
       medicalExpiry: 'Medical Check',
       insuranceExpiry: 'Insurance',
       employmentPassExpiry: 'Employment Pass',
-      tanaExpiry: 'TANA Pass',
+      //tanaExpiry: 'TANA Pass',
       greenIcExpiry: 'Green IC'
     };
 

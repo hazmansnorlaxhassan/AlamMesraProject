@@ -51,6 +51,8 @@ async function readAllDB() {
     id: emp.id,
     ql: formatDate(emp.ql),
     name: emp.name,
+    employer: emp.employer || '',
+    employerContact: emp.employerContact || '',
     passportNo: emp.passportNo,
     passportExpiry: formatDate(emp.passportExpiry),
     medicalExpiry: formatDate(emp.medicalExpiry),
@@ -58,8 +60,6 @@ async function readAllDB() {
     employmentPassExpiry: formatDate(emp.employmentPassExpiry),
     tanaExpiry: formatDate(emp.tanaExpiry),
     greenIcExpiry: formatDate(emp.greenIcExpiry),
-    employer: emp.employer || emp.employers || '',
-    employerContact: emp.employerContact || '',
     remarks: emp.remarks || '',
     contacts: typeof emp.contacts === 'string' ? JSON.parse(emp.contacts) : (emp.contacts || { emails: [], whatsappNumbers: [] })
   }));

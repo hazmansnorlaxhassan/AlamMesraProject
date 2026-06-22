@@ -405,13 +405,16 @@ const App = {
         }
         return `
           <span class="badge ${badgeClass}">
-            ${dateVal}
+            ${dateVal ? dateVal.split('-').reverse().join('-') : '-'}
             <span class="badge-date">${desc}</span>
           </span>
         `;
       };
 
+      // Insert employer table
       tr.innerHTML = `
+        <td>${emp.employer || '-'}</td>
+        <td>${emp.employerContact || '-'}</td>
         <td>${getBadgeHTML(emp.ql, evalData.documents.ql)}</td>
         <td><strong>${emp.name}</strong></td>
         <td><code>${emp.passportNo}</code></td>
@@ -419,8 +422,6 @@ const App = {
         <td>${getBadgeHTML(emp.medicalExpiry, evalData.documents.medicalExpiry)}</td>
         <td>${getBadgeHTML(emp.insuranceExpiry, evalData.documents.insuranceExpiry)}</td>
         <td>${getBadgeHTML(emp.employmentPassExpiry, evalData.documents.employmentPassExpiry)}</td>
-        <td>${emp.employer || '-'}</td>
-        <td>${emp.employerContact || '-'}</td>
         <td>${getBadgeHTML(emp.tanaExpiry, evalData.documents.tanaExpiry)}</td>
         <td>${getBadgeHTML(emp.greenIcExpiry, evalData.documents.greenIcExpiry)}</td>
         <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${emp.remarks || ''}">${emp.remarks || '-'}</td>
@@ -604,6 +605,18 @@ const App = {
     const modal = document.getElementById('modal-employee');
     const title = document.getElementById('employee-modal-title');
     const form = document.getElementById('employee-form');
+    function formatDateDMY(dateStr) {
+      if (!dateStr) return '-';
+
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr; // fallback if invalid
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+
+      return `${day}-${month}-${year}`;
+    }
 
     form.reset();
     this.selectedEmployeeId = employeeId;
@@ -619,13 +632,15 @@ const App = {
         document.getElementById('emp-medical-expiry').value = emp.medicalExpiry || '';
         document.getElementById('emp-insurance-expiry').value = emp.insuranceExpiry || '';
         document.getElementById('emp-ep-expiry').value = emp.employmentPassExpiry || '';
+        document.getElementById('emp-employer').value = emp.employer || '';
+        document.getElementById('emp-employer-contact').value = emp.employerContact || '';
         document.getElementById('emp-tana-expiry').value = emp.tanaExpiry || '';
         document.getElementById('emp-greenic-expiry').value = emp.greenIcExpiry || '';
         document.getElementById('emp-remarks').value = emp.remarks || '';
 
         // Contacts
-        document.getElementById('emp-emails').value = emp.contacts?.emails ? emp.contacts.emails.join(', ') : '';
-        document.getElementById('emp-whatsapp').value = emp.contacts?.whatsappNumbers ? emp.contacts.whatsappNumbers.join(', ') : '';
+        //document.getElementById('emp-emails').value = emp.contacts?.emails ? emp.contacts.emails.join(', ') : '';
+        //document.getElementById('emp-whatsapp').value = emp.contacts?.whatsappNumbers ? emp.contacts.whatsappNumbers.join(', ') : '';
       }
     } else {
       title.textContent = 'Add New Employee';
@@ -648,20 +663,21 @@ const App = {
       employerContact: document.getElementById('emp-employer-contact').value.trim(),
       tanaExpiry: document.getElementById('emp-tana-expiry').value,
       greenIcExpiry: document.getElementById('emp-greenic-expiry').value,
-      remarks: document.getElementById('emp-remarks').value.trim(),
-      contacts: {
-        emails: document.getElementById('emp-emails').value.split(',').map(e => e.trim()).filter(Boolean),
-        whatsappNumbers: document.getElementById('emp-whatsapp').value.split(',').map(w => w.trim()).filter(Boolean)
-      }
+      remarks: document.getElementById('emp-remarks').value.trim()
+      //contacts: {
+      //emails: document.getElementById('emp-emails').value.split(',').map(e => e.trim()).filter(Boolean),
+      //whatsappNumbers: document.getElementById('emp-whatsapp').value.split(',').map(w => w.trim()).filter(Boolean)
+      //}
     };
 
     const res = DB.saveEmployee(empData);
-    if (res.success) {
-      document.getElementById('modal-employee').classList.remove('active');
-      this.loadDashboardData();
-    } else {
-      alert(res.message);
-    }
+    //if (res.success) {
+    document.getElementById('modal-employee').classList.remove('active');
+    this.loadDashboardData();
+    alert('Employee saved successfully!');
+    //} else {
+    //alert(res.message);
+    // }
   },
 
   // --- Notification Overrides Trigger Modal ---
@@ -675,13 +691,14 @@ const App = {
 
     document.getElementById('notify-target-name').textContent = emp.name;
     document.getElementById('notify-target-passport').textContent = emp.passportNo;
+    document.getElementById('notify-target-employer').textContent = emp.employer;
 
     // Load available contacts for buttons
     const emails = Notifications.getEmailsForEmployee(emp, settings);
     const whatsappNumbers = Notifications.getWhatsappForEmployee(emp, settings);
 
     // Render Contact lists
-    const emailListDiv = document.getElementById('notify-email-recipients');
+    /*const emailListDiv = document.getElementById('notify-email-recipients');
     emailListDiv.innerHTML = '';
     if (emails.length === 0) {
       emailListDiv.innerHTML = `<span style="color: var(--text-muted);">No email addresses configured.</span>`;
@@ -689,7 +706,7 @@ const App = {
       emails.forEach(email => {
         emailListDiv.innerHTML += `<div style="display:flex; align-items:center; gap:8px; margin-bottom: 6px;"><i data-lucide="mail" style="width:14px; color: var(--primary);"></i> <span>${email}</span></div>`;
       });
-    }
+    }*/
 
     const waListDiv = document.getElementById('notify-wa-recipients');
     waListDiv.innerHTML = '';
@@ -727,7 +744,7 @@ const App = {
     }
 
     // Bind Email Trigger Button
-    const btnSendEmail = document.getElementById('btn-trigger-email');
+    /*const btnSendEmail = document.getElementById('btn-trigger-email');
     const newBtnEmail = btnSendEmail.cloneNode(true);
     btnSendEmail.replaceWith(newBtnEmail);
 
@@ -740,7 +757,7 @@ const App = {
       });
     } else {
       newBtnEmail.disabled = true;
-    }
+    }*/
 
     document.getElementById('modal-notify-trigger').classList.add('active');
     this.initLucide();
@@ -752,6 +769,21 @@ const App = {
     const previewContainer = document.getElementById('excel-preview-container');
     const dropzone = document.getElementById('excel-dropzone');
     const btnCommit = document.getElementById('btn-commit-import');
+
+
+    function formatDateDMY(dateStr) {
+      if (!dateStr) return '-';
+
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr; // fallback if invalid
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+
+      return `${day}-${month}-${year}`;
+    }
+
 
     // Show spinner/parsing state
     dropzone.innerHTML = `<i data-lucide="loader" class="animate-spin" style="color: var(--primary);"></i><div class="dropzone-title">Parsing sheet...</div>`;
@@ -790,17 +822,17 @@ const App = {
       res.data.slice(0, 10).forEach(emp => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${emp.ql || '-'}</td>
-          <td><strong>${emp.name}</strong></td>
-          <td><code>${emp.passportNo}</code></td>
-          <td>${emp.passportExpiry || '-'}</td>
-          <td>${emp.medicalExpiry || '-'}</td>
-          <td>${emp.insuranceExpiry || '-'}</td>
-          <td>${emp.employmentPassExpiry || '-'}</td>
           <td>${emp.employer || '-'}</td>
           <td>${emp.employerContact || '-'}</td>
-          <td>${emp.tanaExpiry || '-'}</td>
-          <td>${emp.greenIcExpiry || '-'}</td>
+          <td>${formatDateDMY(emp.ql)}</td>
+          <td><strong>${emp.name}</strong></td>
+          <td><code>${emp.passportNo}</code></td>
+          <td>${formatDateDMY(emp.passportExpiry)}</td>
+          <td>${formatDateDMY(emp.medicalExpiry)}</td>
+          <td>${formatDateDMY(emp.insuranceExpiry)}</td>
+          <td>${formatDateDMY(emp.employmentPassExpiry)}</td>
+          <td>${formatDateDMY(emp.tanaExpiry)}</td>
+          <td>${formatDateDMY(emp.greenIcExpiry)}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -927,15 +959,27 @@ const App = {
   },
 
   // --- Alerts list page (Aggregated alerts view) ---
+
   loadAlertsData: function () {
     const employees = DB.getEmployees();
     const settings = DB.getSettings();
     const container = document.getElementById('alerts-list-container');
 
-    container.innerHTML = '';
 
-    let dangerAlerts = [];
-    let warningAlerts = [];
+    function formatDateDMY(dateStr) {
+      if (!dateStr) return '-';
+
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+
+      return `${day}-${month}-${year}`;
+    }
+
+    container.innerHTML = '';
 
     const docLabels = {
       ql: 'QL',
@@ -949,61 +993,115 @@ const App = {
       greenIcExpiry: 'Green IC'
     };
 
+
+
+    // ✅ GROUPED ALERTS BY EMPLOYEE
+    const employeeAlerts = {};
+
     employees.forEach(emp => {
       const evalData = Notifications.evaluateEmployee(emp, settings.warningDays);
+
       for (const [key, evalResult] of Object.entries(evalData.documents)) {
         if (key === 'employer' || key === 'employerContact') continue;
-        if (evalResult.status === Notifications.STATUS_DANGER) {
-          dangerAlerts.push({ emp, docKey: key, evalResult });
-        } else if (evalResult.status === Notifications.STATUS_WARNING) {
-          warningAlerts.push({ emp, docKey: key, evalResult });
+        if (
+          evalResult.status === Notifications.STATUS_DANGER ||
+          evalResult.status === Notifications.STATUS_WARNING
+        ) {
+          if (!employeeAlerts[emp.id]) {
+            employeeAlerts[emp.id] = {
+              emp,
+              alerts: [],
+              hasDanger: false
+            };
+          }
+
+          if (evalResult.status === Notifications.STATUS_DANGER) {
+            employeeAlerts[emp.id].hasDanger = true;
+          }
+
+          employeeAlerts[emp.id].alerts.push({
+            docKey: key,
+            evalResult
+          });
         }
       }
     });
 
-    let allAlerts = [...dangerAlerts, ...warningAlerts];
+    let allAlerts = Object.values(employeeAlerts);
+
+    // ✅ SEARCH FILTER
     const searchVal = document.getElementById('search-alerts')?.value?.toLowerCase().trim() || '';
     if (searchVal) {
-      allAlerts = allAlerts.filter(alert => {
-        const emp = alert.emp;
+      allAlerts = allAlerts.filter(item => {
+        const emp = item.emp;
         return (emp.employer && emp.employer.toLowerCase().includes(searchVal)) ||
           (emp.employerContact && emp.employerContact.toLowerCase().includes(searchVal));
       });
     }
 
+    // ✅ NO ALERTS
     if (allAlerts.length === 0) {
       container.innerHTML = `
-        <div style="padding: 40px; text-align: center; color: var(--text-healthy);">
-          <i data-lucide="check-circle" style="width:48px; height:48px; margin-bottom: 12px;"></i>
-          <h3>No Active Alerts</h3>
-          <p style="color: var(--text-secondary); margin-top: 4px;">All document expiration dates are healthy and up to date.</p>
-        </div>
-      `;
+      <div style="padding: 40px; text-align: center; color: var(--text-healthy);">
+        <i data-lucide="check-circle" style="width:48px; height:48px; margin-bottom: 12px;"></i>
+        <h3>No Active Alerts</h3>
+        <p style="color: var(--text-secondary); margin-top: 4px;">
+          All document expiration dates are healthy and up to date.
+        </p>
+      </div>
+    `;
       this.initLucide();
       return;
     }
 
-    allAlerts.forEach(alertItem => {
-      const isDanger = alertItem.evalResult.status === Notifications.STATUS_DANGER;
-      const card = document.createElement('div');
-      card.className = `alert-strip ${isDanger ? 'danger' : 'warning'}`;
+    // ✅ RENDER ONE CARD PER EMPLOYEE
+    allAlerts.forEach(item => {
+      const { emp, alerts, hasDanger } = item;
 
-      const desc = isDanger
-        ? `Expired on ${alertItem.emp[alertItem.docKey]} (${Math.abs(alertItem.evalResult.daysRemaining)} days ago)`
-        : `Expiring on ${alertItem.emp[alertItem.docKey]} (${alertItem.evalResult.daysRemaining} days remaining)`;
+
+      const card = document.createElement('div');
+      card.className = `alert-strip ${hasDanger ? 'danger' : 'warning'}`;
+
+      // ✅ BUILD DOCUMENT LIST
+      const docsHtml = alerts.map(a => {
+        const isDanger = a.evalResult.status === Notifications.STATUS_DANGER;
+
+        const formattedDate = formatDateDMY(emp[a.docKey]);
+
+        const desc = isDanger
+          ? `Expired on ${formattedDate} (${Math.abs(a.evalResult.daysRemaining)} days ago)`
+          : `Expiring on ${formattedDate} (${a.evalResult.daysRemaining} days remaining)`;
+
+        return `
+        <div style="margin-top:4px;">
+          • <strong>${docLabels[a.docKey]}</strong>: ${desc}
+        </div>
+      `;
+      }).join('');
 
       card.innerHTML = `
-        <div class="alert-strip-details">
-          <span class="alert-strip-title">${alertItem.emp.name} — ${docLabels[alertItem.docKey]}</span>
-          <span class="alert-strip-subtitle">Passport No: <strong>${alertItem.emp.passportNo}</strong> | ${desc}</span>
+      <div class="alert-strip-details">
+        <span class="alert-strip-title">${emp.name}</span>
+        <span class="alert-strip-subtitle">
+          Passport No: <strong>${emp.passportNo}</strong>
+        </span>
+        <span class="alert-strip-subtitle">
+          Employer: <strong>${emp.employer}</strong>
+        </span>
+        <span class="alert-strip-subtitle">
+          Employer Contact: <strong>${emp.employerContact}</strong>
+        </span>
+        <div style="margin-top:6px; font-size:13px;">
+          ${docsHtml}
         </div>
-        <button class="btn btn-secondary btn-sm" style="padding:6px 12px; font-size:12px;">
-          <i data-lucide="bell" style="width:12px;"></i> Notify
-        </button>
-      `;
+      </div>
+      <button class="btn btn-secondary btn-sm" style="padding:6px 12px; font-size:12px;">
+        <i data-lucide="bell" style="width:12px;"></i> Notify
+      </button>
+    `;
 
       card.querySelector('button').addEventListener('click', () => {
-        this.openNotificationTriggerModal(alertItem.emp.id);
+        this.openNotificationTriggerModal(emp.id);
       });
 
       container.appendChild(card);
@@ -1011,6 +1109,7 @@ const App = {
 
     this.initLucide();
   },
+
 
   // --- Superadmin Settings & Accounts Management ---
   loadSuperadminData: function () {

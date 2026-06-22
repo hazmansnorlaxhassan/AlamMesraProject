@@ -51,7 +51,7 @@ async function initDatabase() {
     database: process.env.DB_DATABASE,
     //database: process.env.database || "alam_mesra_db_different",
     waitForConnections: true,
-    connectionLimit: 2,
+    connectionLimit: 5,
     queueLimit: 0
   });
 
