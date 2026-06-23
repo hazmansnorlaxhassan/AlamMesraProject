@@ -441,6 +441,7 @@ const App = {
         if (confirm(`Are you sure you want to delete ${emp.name}?`)) {
           DB.deleteEmployee(emp.id);
           this.loadDashboardData();
+          alert('Deleted employee successfully');
         }
       });
 
@@ -1152,6 +1153,7 @@ const App = {
         if (confirm(`Are you sure you want to delete admin account ${admin.name}?`)) {
           DB.deleteAdmin(admin.id);
           this.loadSuperadminData();
+         
         }
       });
 

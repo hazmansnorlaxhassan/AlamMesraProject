@@ -27,9 +27,9 @@
 
     <!-- Collapsible/Responsive Sidebar -->
     <aside id="app-sidebar" class="sidebar d-none">
-      <div class="sidebar-logo">
-        <i data-lucide="shield-alert"></i>
-        <h1>ALAM MESRA</h1>
+      <div class="sidebar-logo" onclick="switchView('dashboard')" style="cursor: pointer;">
+        <img src="assets/logo.png">
+        <h1>MONITORING AND NOTIFICATION SYSTEM</h1>
       </div>
 
       <nav class="sidebar-menu">
@@ -40,7 +40,7 @@
           <li class="menu-item" data-view="alerts" id="nav-alerts">
             <a href="#"><i data-lucide="alert-triangle"></i> <span>Active Alerts</span></a>
           </li>
-          <li class="menu-item" data-view="excel" id="nav-excel">
+          <li class="menu-item superadmin-only d-none" data-view="excel" id="nav-excel">
             <a href="#"><i data-lucide="file-spreadsheet"></i> <span>Excel Upload</span></a>
           </li>
           <!--<li class="menu-item" data-view="outbox" id="nav-outbox">
@@ -166,7 +166,7 @@
 
             <div class="glass-panel metric-card">
               <div class="metric-info">
-                <h3>Expired Documents</h3>
+                <h3>Employees with Expired Documents</h3>
                 <span id="expired-count-metric" class="metric-value text-danger">0</span>
               </div>
               <div class="metric-icon-box danger">
@@ -176,7 +176,7 @@
 
             <div class="glass-panel metric-card">
               <div class="metric-info">
-                <h3>Expiring Soon (<=30 days)</h3>
+                <h3>Employees with Expiring Soon Documents (<=30 days)</h3>
                     <span id="expiring-count-metric" class="metric-value text-warning">0</span>
               </div>
               <div class="metric-icon-box warning">
