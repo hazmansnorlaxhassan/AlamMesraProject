@@ -18,6 +18,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Lucide Icons for high-quality SVG interfaces -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.13/main.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.13/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.13/main.min.js"></script>
 </head>
 
 <body>
@@ -40,6 +43,7 @@
           <li class="menu-item" data-view="alerts" id="nav-alerts">
             <a href="#"><i data-lucide="alert-triangle"></i> <span>Active Alerts</span></a>
           </li>
+
           <li class="menu-item superadmin-only d-none" data-view="excel" id="nav-excel">
             <a href="#"><i data-lucide="file-spreadsheet"></i> <span>Excel Upload</span></a>
           </li>
@@ -136,6 +140,7 @@
 
       <!-- View: Dashboard (Main view) -->
       <section id="view-dashboard" class="view-section">
+
         <div class="content-header">
           <div class="header-title">
             <h2>Expiration Dashboard</h2>
@@ -211,6 +216,10 @@
               </div>
             </div>
           </div>
+
+
+
+
 
           <!-- Main Table Section -->
           <div class="glass-panel table-card">
@@ -361,6 +370,8 @@
           </div>
         </div>
       </section>
+
+
 
       <!-- View: Simulated System Outbox Logs -->
       <section id="view-outbox" class="view-section">
@@ -700,11 +711,15 @@
     <!-- Uses view-excel section directly or can trigger upload -->
   </div>
 
+
   <!-- --- Load scripts in strict execution sequence --- -->
   <script src="database.js"></script>
   <script src="excel-handler.js"></script>
   <script src="notifications.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.12.1/html2pdf.bundle.min.js"></script>
+
   <script src="app.js"></script>
+
 </body>
 
 </html>

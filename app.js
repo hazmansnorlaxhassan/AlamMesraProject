@@ -375,6 +375,56 @@ const App = {
     this.renderEmployeeTable();
   },
 
+  // --- Employee Report PDF Download ---
+  downloadEmployeeReport: function (empId) {
+
+    function formatDateDMY(dateStr) {
+      if (!dateStr) return '-';
+
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr; // fallback if invalid
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+
+      return `${day}-${month}-${year}`;
+    }
+
+    const emp = DB.getEmployeeById(empId);
+    if (!emp) return;
+    // Create temporary element for report
+    const reportDiv = document.createElement('div');
+    reportDiv.style.padding = '20px';
+    reportDiv.innerHTML = `
+      <h1>Employee Report</h1>
+      <p><strong>Name:</strong> ${emp.name}</p>
+      <p><strong>Passport No:</strong> ${emp.passportNo}</p>
+      <p><strong>Employer:</strong> ${emp.employer || '-'}</p>
+      <p><strong>Employer Contact:</strong> ${emp.employerContact || '-'}</p>
+      <p><strong>QL Expiry:</strong> ${formatDateDMY(emp.ql) || '-'}</p>
+      <p><strong>Passport Expiry:</strong> ${formatDateDMY(emp.passportExpiry) || '-'}</p>
+      <p><strong>Medical Expiry:</strong> ${formatDateDMY(emp.medicalExpiry) || '-'}</p>
+      <p><strong>Insurance Expiry:</strong> ${formatDateDMY(emp.insuranceExpiry) || '-'}</p>
+      <p><strong>Employment Pass Expiry:</strong> ${formatDateDMY(emp.employmentPassExpiry) || '-'}</p>
+      <p><strong>TANA:</strong> ${formatDateDMY(emp.tanaExpiry) || '-'}</p>
+      <p><strong>Green IC Expiry:</strong> ${emp.greenIcExpiry || '-'}</p>
+      <p><strong>Remarks:</strong> ${emp.remarks || '-'}</p>
+    `;
+    const opt = {
+      margin: 0.5,
+      filename: `${emp.name.replace(/\s+/g, '_')}_report.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    // Use html2pdf library (must be loaded in page)
+    if (window.html2pdf) {
+      window.html2pdf().set(opt).from(reportDiv).save();
+    } else {
+      console.error('html2pdf library not loaded');
+    }
+  },
   renderEmployeeTable: function () {
     const tbody = document.getElementById('employee-tbody');
     tbody.innerHTML = '';
@@ -434,6 +484,7 @@ const App = {
             <button class="btn-icon btn-edit" title="Edit Employee"><i data-lucide="edit-3"></i></button>
             <button class="btn-icon btn-notify text-warning" title="Send Notifications"><i data-lucide="bell"></i></button>
             <button class="btn-icon btn-delete text-danger" title="Delete Employee"><i data-lucide="trash-2"></i></button>
+            <button class="btn-icon btn-download text-primary" title="Download PDF Report"><i data-lucide="download"></i></button>
           </div>
         </td>
       `;
@@ -448,6 +499,7 @@ const App = {
           alert('Deleted employee successfully');
         }
       });
+      tr.querySelector('.btn-download').addEventListener('click', () => this.downloadEmployeeReport(emp.id));
 
       tbody.appendChild(tr);
     });
@@ -1157,7 +1209,7 @@ const App = {
         if (confirm(`Are you sure you want to delete admin account ${admin.name}?`)) {
           DB.deleteAdmin(admin.id);
           this.loadSuperadminData();
-         
+
         }
       });
 
