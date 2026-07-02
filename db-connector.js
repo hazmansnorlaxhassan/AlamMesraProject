@@ -111,9 +111,9 @@ async function createTables() {
       action VARCHAR(64) NOT NULL,
       details JSON NULL
     )`,
-    `INSERT INTO users (id, email, name, password, role)
-     VALUES ('u_super', 'superadmin@system.com', 'Super Administrator', 'superadmin123', 'superadmin')
-     ON DUPLICATE KEY UPDATE id=id`,
+    `INSERT INTO users (id, email, name, password, role) 
+     VALUES ('u_super', 'superadmin@system.com', 'Super Administrator', 'e34f92a20532a873cb3184398070b4b82a8fa29cf48572c203dc5f0fa6158231', 'superadmin')
+     ON DUPLICATE KEY UPDATE password=VALUES(password)`,
     `INSERT INTO settings (id, warningDays, criticalDays, defaultEmails, defaultWhatsapp)
      VALUES (1, 30, 7, 'manager1@system.com, safety@system.com', '+60123456789, +60198765432')
      ON DUPLICATE KEY UPDATE id=id`

@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS change_log (
 
 -- Insert Default Superadmin User if not exists
 INSERT INTO users (id, email, name, password, role)
-VALUES ('u_super', 'superadmin@system.com', 'Super Administrator', 'superadmin123', 'superadmin')
-ON DUPLICATE KEY UPDATE id=id;
+VALUES ('u_super', 'superadmin@system.com', 'Super Administrator', 'e34f92a20532a873cb3184398070b4b82a8fa29cf48572c203dc5f0fa6158231', 'superadmin')
+ON DUPLICATE KEY UPDATE password=VALUES(password);
 
 -- Insert Default Settings if not exists
 INSERT INTO settings (id, warningDays, criticalDays, defaultEmails, defaultWhatsapp)

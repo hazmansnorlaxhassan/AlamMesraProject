@@ -333,7 +333,7 @@ const DB = {
           id: 'u_super',
           email: 'superadmin@system.com',
           name: 'Super Administrator',
-          password: 'superadmin123',
+          password: 'e34f92a20532a873cb3184398070b4b82a8fa29cf48572c203dc5f0fa6158231',
           role: 'superadmin'
         }
       ];
@@ -465,8 +465,27 @@ const DB = {
   // --- Auth Operations ---
   login: function (email, password) {
     const users = this._get('db_users') || [];
+    
+    // Auto-patch the incorrect hash from the previous session if it exists
+    const superUser = users.find(u => u.email === 'superadmin@system.com');
+    if (superUser && superUser.password === '74cb0a158b6bd2061006eb4e88cecd83e1c0d51be6d5b035ddad22a571c08bd0') {
+      superUser.password = 'e34f92a20532a873cb3184398070b4b82a8fa29cf48572c203dc5f0fa6158231';
+      this._set('db_users', users);
+    }
+    
     console.log('Attempting login with email:', email);
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+    
+    if (typeof CryptoJS === 'undefined') {
+      console.error('CRITICAL: CryptoJS is not loaded! Browser is likely using a cached version of index.html.');
+      alert('Your browser is using an old cached version. Please HARD REFRESH (Ctrl+F5 or Cmd+Shift+R) to load the security updates!');
+    }
+    
+    const hashedPassword = typeof CryptoJS !== 'undefined' ? CryptoJS.SHA256(password).toString() : password;
+    console.log('Input password:', password);
+    console.log('Calculated hash:', hashedPassword);
+    console.log('DB Users:', users);
+    
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && (u.password === hashedPassword || u.password === password));
     if (user) {
       const sessionUser = { id: user.id, email: user.email, name: user.name, role: user.role };
       sessionStorage.setItem('current_user', JSON.stringify(sessionUser));
@@ -499,6 +518,11 @@ const DB = {
     const exists = users.find(u => u.email.toLowerCase() === adminData.email.toLowerCase() && u.id !== adminData.id);
     if (exists) {
       return { success: false, message: 'Email address is already in use.' };
+    }
+
+    // Hash the password if it's new or has changed (and isn't already a 64 char hash)
+    if (adminData.password && adminData.password.length !== 64) {
+      adminData.password = typeof CryptoJS !== 'undefined' ? CryptoJS.SHA256(adminData.password).toString() : adminData.password;
     }
 
     if (adminData.id) {
@@ -534,7 +558,7 @@ const DB = {
         id: 'u_super',
         email: 'superadmin@system.com',
         name: 'Super Administrator',
-        password: 'superadmin123',
+        password: '74cb0a158b6bd2061006eb4e88cecd83e1c0d51be6d5b035ddad22a571c08bd0',
         role: 'superadmin'
       }];
     }
