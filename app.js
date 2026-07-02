@@ -1,3 +1,7 @@
+if (typeof window === 'undefined') {
+  require('./server.js');
+} else {
+
 /**
  * App Module - Core frontend application controller
  */
@@ -1233,3 +1237,5 @@ window.addEventListener('db-synced', () => {
   console.log('[App] Server DB synced — refreshing UI');
   App.checkSession();
 });
+
+}

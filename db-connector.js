@@ -32,12 +32,15 @@ const config = {
 let pool = null;
 
 async function initDatabase() {
+  // Connect directly using the pool. Shared hosts don't allow CREATE DATABASE.
   let connection;
   try {
-    connection = await mysql.createConnection(config);
-    const dbName = process.env.DB_DATABASE;
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
-    console.log(`✅ Database "${dbName}" ensured.`);
+    // Test connection by creating a temporary connection to the specific database
+    connection = await mysql.createConnection({
+      ...config,
+      database: process.env.DB_DATABASE
+    });
+    console.log(`✅ Connected to database "${process.env.DB_DATABASE}".`);
   } catch (err) {
     console.error('❌ Failed to connect to MySQL during initial setup check:', err.message);
     throw err;

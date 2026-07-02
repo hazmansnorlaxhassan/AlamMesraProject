@@ -228,7 +228,14 @@ function parseBody(req) {
 // Create the HTTP server
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
-  const pathname = url.pathname;
+  let pathname = url.pathname;
+  
+  // Support for cPanel subfolder deployment (e.g., /nodeapp)
+  const baseUrl = process.env.BASE_URL || '';
+  if (baseUrl && pathname.startsWith(baseUrl)) {
+    pathname = pathname.substring(baseUrl.length);
+  }
+  if (!pathname) pathname = '/';
 
   // --- API Routes ---
   if (pathname === '/api/db' && req.method === 'GET') {

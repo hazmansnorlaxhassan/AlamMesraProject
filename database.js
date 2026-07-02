@@ -47,8 +47,17 @@ const DB = {
       }));
     }
 
+    // Generate dynamic API URL to support subfolder deployments (e.g. /nodeapp)
+    const getApiUrl = (endpoint) => {
+      let base = window.location.pathname;
+      if (base.endsWith('.html')) base = base.substring(0, base.lastIndexOf('/'));
+      if (!base.endsWith('/')) base += '/';
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+      return base + cleanEndpoint;
+    };
+
     try {
-      const response = await fetch(`/api/db/${table}`, {
+      const response = await fetch(getApiUrl(`/api/db/${table}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -70,8 +79,17 @@ const DB = {
 
   // Sync entire database to the MySQL backend server
   _syncAllToServer: async function (data) {
+    // Generate dynamic API URL
+    const getApiUrl = (endpoint) => {
+      let base = window.location.pathname;
+      if (base.endsWith('.html')) base = base.substring(0, base.lastIndexOf('/'));
+      if (!base.endsWith('/')) base += '/';
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+      return base + cleanEndpoint;
+    };
+
     try {
-      const response = await fetch('/api/db', {
+      const response = await fetch(getApiUrl('/api/db'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -282,9 +300,18 @@ const DB = {
   },
 
   init: async function () {
+    // Generate dynamic API URL
+    const getApiUrl = (endpoint) => {
+      let base = window.location.pathname;
+      if (base.endsWith('.html')) base = base.substring(0, base.lastIndexOf('/'));
+      if (!base.endsWith('/')) base += '/';
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+      return base + cleanEndpoint;
+    };
+
     // Try to load state from MySQL server on startup
     try {
-      const response = await fetch('/api/db');
+      const response = await fetch(getApiUrl('/api/db'));
       if (response.ok) {
         const data = await response.json();
         this._loadData(data);
